@@ -294,7 +294,7 @@ UserSchema.statics = {
     )
       .populate({
         path: 'requested_in_comming',
-        select: { avatar: 1, name: 1, _id: 1, email: 1 },
+        select: { avatar: { $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$avatar'] }, name: 1, _id: 1, email: 1 },
       })
       .exec();
   },
@@ -377,7 +377,7 @@ UserSchema.statics = {
           twitter: '$member.twitter',
           google: '$member.google',
           github: '$member.github',
-          avatar: '$member.avatar',
+          avatar: { $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$member.avatar'] },
         },
       },
       {
@@ -423,7 +423,7 @@ UserSchema.statics = {
   },
 
   getSendRequestMakeFriend: function(userId, options = {}) {
-    let select = typeof options ? { _id: 1, name: 1, username: 1, email: 1, avatar: 1 } : { _id: 1 };
+    let select = typeof options ? { _id: 1, name: 1, username: 1, email: 1, avatar: { $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$avatar'] } } : { _id: 1 };
     let limit = options.limit || '';
     let page = options.page || 0;
 

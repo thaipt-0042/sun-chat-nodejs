@@ -192,7 +192,7 @@ RoomSchema.statics = {
             $cond: {
               if: { $eq: ['$type', config.ROOM_TYPE.GROUP_CHAT] },
               then: { $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$avatar'] },
-              else: { $arrayElemAt: ['$members.user_info.avatar', 0] },
+              else: { $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, {$arrayElemAt: ['$members.user_info.avatar', 0]}] },
             },
           },
           type: 1,
@@ -356,7 +356,7 @@ RoomSchema.statics = {
       {
         $project: {
           name: 1,
-          avatar_url: 1,
+          avatar_url: { $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$avatar_url'] },
         },
       },
     ]);
@@ -389,7 +389,9 @@ RoomSchema.statics = {
           'user.name': 1,
           'user.username': 1,
           'user.email': 1,
-          'user.avatar': 1,
+          'user.avatar': {
+            $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$user.avatar'],
+          },
           'user.phone_number': 1,
           'user.full_address': 1,
           'user.twitter': 1,
@@ -450,7 +452,7 @@ RoomSchema.statics = {
         $project: {
           _id: 1,
           name: 1,
-          avatar: 1,
+          avatar: { $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$avatar'] },
           email: 1,
         },
       }
@@ -623,7 +625,7 @@ RoomSchema.statics = {
     )
       .populate({
         path: 'incoming_requests',
-        select: { avatar: 1, name: 1, _id: 1, email: 1 },
+        select: { avatar: { $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$avatar'] }, name: 1, _id: 1, email: 1 },
       })
       .exec();
   },
@@ -856,7 +858,9 @@ RoomSchema.statics = {
           updatedAt: 1,
           'user_info._id': 1,
           'user_info.name': 1,
-          'user_info.avatar': 1,
+          'user_info.avatar': {
+            $concat: [`/${config.DIR_UPLOAD_FILE.split('/').slice(2)[0]}/`, '$user_info.avatar'],
+          },
           'user_info.email': 1,
           is_notification: 1,
         },
