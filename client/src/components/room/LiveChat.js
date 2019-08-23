@@ -45,7 +45,7 @@ class LiveChat extends Component {
 
   componentDidMount() {
     let _this = this;
-    const { roomId, liveChatId } = this.props.match.params;
+    const { liveChatId } = this.props.match.params;
 
     this.socket.on('change-offer-list', res => {
       const roomId = this.props.match.params.roomId;
@@ -132,9 +132,8 @@ class LiveChat extends Component {
     }
   }
 
-  joinLiveChat(liveChatId) {
+  joinLiveChat(liveChatId, isTypeVideo) {
     let _this = this;
-    let peerId = null;
 
     this.peer = new Peer();
     /* const peer = new Peer(this.props.userContext.info._id,
@@ -146,7 +145,6 @@ class LiveChat extends Component {
     );*/
 
     this.peer.on('open', function(peerId) {
-      peerId = peerId;
       _this.socket.emit('join-live-chat', { liveChatId: liveChatId, peerId: peerId });
     });
 
@@ -159,7 +157,7 @@ class LiveChat extends Component {
 
     // this.socket.emit('join-live-chat', { liveChatId: liveChatId, peerId: peerId });
 
-    let options = { audio: true, video: true };
+    let options = { audio: true, video: isTypeVideo };
     openStream(options, function(stream) {
       _this.stream = stream;
       playVideo(stream, 'main-video');
@@ -170,7 +168,7 @@ class LiveChat extends Component {
   checkMember({ roomId, liveChatId }) {
     checkMember({ roomId, liveChatId }).then(res => {
       let enable = false;
-      const { status, isCaller } = res.data;
+      const { status, isCaller, isTypeVideo } = res.data;
 
       if (status) {
         enable = true;
@@ -180,10 +178,11 @@ class LiveChat extends Component {
           cameraView: '',
         });
 
-        this.joinLiveChat(liveChatId);
+        this.joinLiveChat(liveChatId, isTypeVideo);
         this.setState({
           listMember: listMember,
           isCaller: isCaller,
+          cameraOn: isTypeVideo,
         });
       }
 
@@ -240,25 +239,34 @@ class LiveChat extends Component {
   };
 
   changeMicro = () => {
-    this.togleMicrophone();
+    this.toggleMicrophone();
     this.setState({
       microOn: !this.state.microOn,
     });
   };
 
   changeCamera = () => {
-    this.togleCamera();
+    const { microOn, cameraOn } = this.state;
+    this.toggleCamera(microOn);
     this.setState({
-      cameraOn: !this.state.cameraOn,
+      cameraOn: !cameraOn,
     });
   };
 
-  togleMicrophone = () => {
+  toggleMicrophone = () => {
     this.stream.getAudioTracks()[0].enabled = !this.stream.getAudioTracks()[0].enabled;
   };
 
-  togleCamera = () => {
-    this.stream.getVideoTracks()[0].enabled = !this.stream.getVideoTracks()[0].enabled;
+  toggleCamera = (micro) => {
+    if (!this.stream.getVideoTracks().length) {
+      openStream({ audio: micro, video: true }, (stream) => {
+        this.stream = stream;
+        playVideo(stream, 'main-video');
+        playVideo(stream, this.props.userContext.info._id);
+      });
+    } else {
+      this.stream.getVideoTracks()[0].enabled = !this.stream.getVideoTracks()[0].enabled;
+    }
   };
 
   rejectPerson = e => {
@@ -327,6 +335,10 @@ class LiveChat extends Component {
     });
   };
 
+  changeMainVideo = e => {
+    document.getElementById('main-video').srcObject  = document.getElementById(e.currentTarget.id).srcObject;
+  }
+
   render = () => {
     const {
       checkDisplayLayout,
@@ -375,8 +387,8 @@ class LiveChat extends Component {
               <div className="list-block">
                 {listMember.map(member => {
                   return (
-                    <div key={member.id} className={rightOn ? '' : 'hide'}>
-                      <video className="participant-video" id={member.id} />
+                    <div key={member.id} className={rightOn ? 'member-of-stream' : 'member-of-stream hide'}>
+                      <video className="participant-video" id={member.id} onClick={this.changeMainVideo}/>
                       <span className="person-name">{member.name}</span>
                     </div>
                   );

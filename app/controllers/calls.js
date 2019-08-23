@@ -85,7 +85,13 @@ exports.checkMember = async (req, res) => {
       io.to(userId).emit('member_receive_notification_join_calling', { disableInvitePopUp });
     }
 
-    res.status(200).json({ status: !!result, isCaller: result ? result.member.is_caller : null });
+    const response = {
+      status: !!result,
+      isCaller: result ? result.member.is_caller : null,
+      isTypeVideo: result ? result.is_type_video : null,
+    };
+
+    res.status(200).json(response);
   } catch (err) {
     channel.error(err);
   }

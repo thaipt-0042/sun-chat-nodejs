@@ -1851,6 +1851,13 @@ RoomSchema.statics = {
       {
         $project: {
           liveId: '$calls._id',
+          is_type_video: {
+            $cond: {
+              if: { $eq: ['$calls.type', config.CALL.TYPE.VIDEO_CHAT] },
+              then: true,
+              else: false,
+            },
+          },
           member: { $arrayElemAt: ['$members', 0] },
         },
       }
