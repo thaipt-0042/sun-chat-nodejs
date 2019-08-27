@@ -9,6 +9,7 @@ const authValidate = {
   },
   email: {
     maxLength: 255,
+    pattern: '^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+.)?[a-zA-Z]+.)?(sun-asterisk)\\.com$',
   },
   password: {
     minLength: 6,

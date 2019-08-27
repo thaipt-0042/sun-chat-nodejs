@@ -33,3 +33,7 @@ export function resendEmail(data) {
 export function checkResetPasswordToken(token) {
   return new Http().get(`/users/check-reset-password-token?token=${token}`);
 }
+
+export function resendActiveMail(email) {
+  return new Http().post('/resend-active-mail', email);
+}

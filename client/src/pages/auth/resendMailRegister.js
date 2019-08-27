@@ -1,6 +1,7 @@
+
 import React, { Fragment } from 'react';
 import 'antd/dist/antd.css';
-import { sendMailResetPassword } from './../../api/auth.js';
+import { resendActiveMail } from './../../api/auth.js';
 import { Form, Icon, Input, Button, Alert } from 'antd';
 import { PrivateIcon } from './../../components/PrivateIcon';
 import { withNamespaces } from 'react-i18next';
@@ -8,13 +9,14 @@ import { withRouter } from 'react-router';
 import { authValidate } from './../../config/validate';
 import Loading from './../../components/Loading';
 
-class ForgotPassword extends React.Component {
+class resendMail extends React.Component {
   // State and props in properties
   state = {
-    is_reset: false,
+    is_resend: false,
     error: '',
     errors: {},
     isLoading: false,
+    messages: ''
   };
 
   rules = {
@@ -34,39 +36,42 @@ class ForgotPassword extends React.Component {
     },
   };
 
-  handleResetPassword = e => {
+  handleResendActiveMail = e => {
     this.setState({
       isLoading: true,
+      error: ''
     });
 
     const { email } = this.props.form.getFieldsValue();
 
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        sendMailResetPassword({
+        resendActiveMail({
           email: email,
         })
-          .then(res => {
-            this.setState({
-              is_reset: true,
-            });
-          })
-          .catch(err => {
-            this.setState({
-              error: err.response.data.error,
-              errors: err.response.data.error ? {} : err.response.data,
-            });
+        .then(res => {
+          this.setState({
+            is_resend: true,
+            messages: res.data.msg,
           });
+        })
+        .catch(err => {
+          this.setState({
+            error: err.response.data.err,
+            isLoading: false,
+            errors: err.response.data.err ? {} : err.response.data,
+          });
+        });
       }
     });
   };
 
   render() {
-    let { is_reset, error, errors, isLoading } = this.state;
+    let { is_resend, error, errors, isLoading, messages } = this.state;
     const { form, t } = this.props;
     let contentHTML = '';
 
-    if (is_reset === false) {
+    if (is_resend === false) {
       contentHTML = (
         <div className="form">
           <Form className="login-form">
@@ -95,8 +100,8 @@ class ForgotPassword extends React.Component {
               )}
             </Form.Item>
             <Form.Item>
-              <Button className="login-form-button" type="primary" value="Log in" onClick={this.handleResetPassword}>
-                {t('reset_password')}
+              <Button className="login-form-button" type="primary" value="Log in" onClick={this.handleResendActiveMail}>
+                {t('resend_mail_resgister')}
               </Button>
               <div>
                 <a className="login-form-forgot" href="/register">
@@ -114,8 +119,8 @@ class ForgotPassword extends React.Component {
       contentHTML = (
         <div className="form">
           <Form className="login-form">
-            <h1> {t('check_mail')} </h1>
-            <a href="/"> {t('go_home')} </a>
+            <h1> {messages} </h1>
+            <a href="/login"> {t('login')} </a>
           </Form>
         </div>
       );
@@ -124,6 +129,6 @@ class ForgotPassword extends React.Component {
   }
 }
 
-ForgotPassword = Form.create()(ForgotPassword);
+resendMail = Form.create()(resendMail);
 
-export default withNamespaces(['auth'])(withRouter(ForgotPassword));
+export default withNamespaces(['auth'])(withRouter(resendMail));

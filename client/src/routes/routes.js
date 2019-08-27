@@ -13,6 +13,7 @@ import ListContacts from '../components/modals/contact/ListContacts';
 import RoomDetail from '../pages/rooms/RoomDetail';
 import AddContact from '../components/modals/contact/AddContact';
 import LiveChat from '../components/room/LiveChat';
+import resendMail from '../pages/auth/resendMailRegister';
 
 const routes = [
   {
@@ -80,6 +81,12 @@ const routes = [
     exact: true,
     auth: false,
     component: ForgotPassword,
+  },
+  {
+    path: '/resend-mail',
+    exact: true,
+    auth: false,
+    component: resendMail,
   },
   {
     path: '/reset-password',

@@ -277,4 +277,5 @@ router.post(
   callsController.getListNotMember
 );
 
+router.post('/resend-active-mail', users.apiResendMailRegister);
 module.exports = router;
