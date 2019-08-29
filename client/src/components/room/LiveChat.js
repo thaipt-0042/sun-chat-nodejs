@@ -157,11 +157,15 @@ class LiveChat extends Component {
 
     // this.socket.emit('join-live-chat', { liveChatId: liveChatId, peerId: peerId });
 
-    let options = { audio: true, video: isTypeVideo };
+    let options = { audio: true, video: true };
     openStream(options, function(stream) {
       _this.stream = stream;
       playVideo(stream, 'main-video');
       playVideo(stream, _this.props.userContext.info._id);
+
+      if (!isTypeVideo) {
+        _this.toggleCamera();
+      }
     });
   }
 
@@ -246,8 +250,8 @@ class LiveChat extends Component {
   };
 
   changeCamera = () => {
-    const { microOn, cameraOn } = this.state;
-    this.toggleCamera(microOn);
+    const { cameraOn } = this.state;
+    this.toggleCamera();
     this.setState({
       cameraOn: !cameraOn,
     });
@@ -257,16 +261,8 @@ class LiveChat extends Component {
     this.stream.getAudioTracks()[0].enabled = !this.stream.getAudioTracks()[0].enabled;
   };
 
-  toggleCamera = (micro) => {
-    if (!this.stream.getVideoTracks().length) {
-      openStream({ audio: micro, video: true }, (stream) => {
-        this.stream = stream;
-        playVideo(stream, 'main-video');
-        playVideo(stream, this.props.userContext.info._id);
-      });
-    } else {
-      this.stream.getVideoTracks()[0].enabled = !this.stream.getVideoTracks()[0].enabled;
-    }
+  toggleCamera = () => {
+    this.stream.getVideoTracks()[0].enabled = !this.stream.getVideoTracks()[0].enabled;
   };
 
   rejectPerson = e => {
