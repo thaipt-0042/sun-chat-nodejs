@@ -347,7 +347,7 @@ class ChatBox extends React.Component {
         this.attr.firstLoading = false;
       }
     }
-    
+
     const height = $('#originMsgTooltip').height();
     const position = $('#originMsgTooltip').position();
 
@@ -817,28 +817,30 @@ class ChatBox extends React.Component {
                 </a>
               </Badge>
             </Popover>
-            <Popover
-              content={showListMember}
-              trigger="click"
-              visible={this.state.visiblePopoverTo}
-              onVisibleChange={this.handleVisibleChangePopoverTo}
-            >
-              <Badge className="header-icon" type="primary">
-                <a href="javascript:;">{roomInfo.type !== room.ROOM_TYPE.MY_CHAT ? <strong>{t('to')}</strong> : ''}</a>
-              </Badge>
-            </Popover>
-            {roomInfo.type !== room.ROOM_TYPE.MY_CHAT && (
-              <ModalChooseMemberToCall
-                listMember={listMember}
-                roomDetail={{
-                  name: roomInfo.name,
-                  avatar: roomInfo.avatar,
-                  type: roomInfo.type,
-                  _id: roomInfo._id,
-                  currentUserId: currentUserInfo._id,
-                }}
-              />
-            )}
+            {roomInfo.type !== undefined && roomInfo.type !== room.ROOM_TYPE.MY_CHAT ? (
+              <React.Fragment>
+                <Popover
+                  content={showListMember}
+                  trigger="click"
+                  visible={this.state.visiblePopoverTo}
+                  onVisibleChange={this.handleVisibleChangePopoverTo}
+                >
+                  <Badge className="header-icon" type="primary">
+                    <a href="javascript:;">{roomInfo.type !== room.ROOM_TYPE.MY_CHAT ? <strong>{t('to')}</strong> : ''}</a>
+                  </Badge>
+                </Popover>
+                <ModalChooseMemberToCall
+                  listMember={listMember}
+                  roomDetail={{
+                    name: roomInfo.name,
+                    avatar: roomInfo.avatar,
+                    type: roomInfo.type,
+                    _id: roomInfo._id,
+                    currentUserId: currentUserInfo._id,
+                  }}
+                />
+              </React.Fragment>
+            ) : ''}
             <a onClick={handlersMessage.actionFunc.infoBlock} className="block">
               <strong>{block.INFO_BLOCK}</strong>
             </a>
@@ -863,6 +865,7 @@ class ChatBox extends React.Component {
                   style={{ float: 'right' }}
                   type="primary"
                   onClick={e => handleSendMessage(e, this)}
+                  tabIndex={2}
                   disabled={isReadOnly}
                 >
                   {t('button.send')}
@@ -876,6 +879,7 @@ class ChatBox extends React.Component {
             style={{ resize: 'none' }}
             id="msg-content"
             disabled={isReadOnly}
+            tabIndex={1}
             onKeyDown={e => handleSendMessage(e, this)}
             ref={input => {
               this.inputMsg = input;

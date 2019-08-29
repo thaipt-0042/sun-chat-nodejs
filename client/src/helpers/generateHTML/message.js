@@ -116,15 +116,13 @@ export function generateMessageHTML(component, message, isGetContentOfReplyMsg =
     <div
       key={message._id}
       ref={element => (component.attr.messageRowRefs[message._id] = element)}
-      className="wrap-message"
+      className={
+        'wrap-message' + (isToMe ? ' timelineMessage--mention' : '') + (messageIdEditing === message._id ? ' isEditing' : '')
+      }
     >
       {message._id === nextMsgId ? redLine : ''}
       <Row
         key={message._id}
-        className={
-          (messageIdEditing === message._id ? 'message-item isEditing' : 'message-item',
-          isToMe ? 'timelineMessage--mention' : '')
-        }
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         id={message._id}
@@ -190,16 +188,16 @@ export function generateMessageHTML(component, message, isGetContentOfReplyMsg =
           </div>
         </Col>
         <Col span={2} className="message-time">
-          <h4>
-            {component.formatMsgTime(message.updatedAt)}{' '}
+          <span>
             {message.updatedAt !== message.createdAt ? (
               <span>
-                <Icon type="edit" />
+                <Icon type="edit" />{' '}
               </span>
             ) : (
               ''
             )}
-          </h4>
+            {component.formatMsgTime(message.updatedAt)}
+          </span>
         </Col>
         {!isGetContentOfReplyMsg && (
           <Col span={24} style={{ position: 'relative' }}>
