@@ -63,7 +63,7 @@ class Profile extends React.Component {
       rules: [
         { required: true, message: this.props.t('auth:validate.email.required') },
         {
-          pattern: '^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+.)?[a-zA-Z]+.)?(sun-asterisk)\\.com$',
+          pattern: authValidate.email.pattern,
           message: this.props.t('auth:validate.email.regex'),
         },
         {

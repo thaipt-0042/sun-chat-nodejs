@@ -82,7 +82,7 @@ class RegisterPage extends React.Component {
       rules: [
         { required: true, message: this.props.t('validate.email.required') },
         {
-          pattern: '^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+.)?[a-zA-Z]+.)?(sun-asterisk)\\.com$',
+          pattern: authValidate.email.pattern,
           message: this.props.t('validate.email.regex'),
         },
         {
@@ -276,7 +276,12 @@ class RegisterPage extends React.Component {
               <Button type="primary" htmlType="submit" className="login-form-button">
                 {t('register')}
               </Button>
-              {t('or')} <Link to="/login">{t('login')} !</Link>
+              <a className="login-form-forgot" href="/login">
+                {t('login')}
+              </a>
+              <a style={{ float: 'right' }} href="/resend-mail">
+                {t('resend_mail_resgister')}
+              </a>
             </Form.Item>
           </Form>
         </div>

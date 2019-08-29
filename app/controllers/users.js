@@ -885,4 +885,34 @@ exports.checkResetToken = async function(req, res) {
       error: __('token_invalid'),
     });
   }
-}
+};
+
+exports.apiResendMailRegister = async function(req, res) {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return res.status(500).json({
+        err: __('user.resend_mail_register.already_not_exist_user'),
+      });
+    } else {
+      if (user.active === false) {
+        mailer
+          .activeEmail(user)
+          .then(result => res.status(200).json({ msg: result }))
+          .catch(err => channeactiveEmaill.error(err.toString()));
+      } else {
+        return res.status(500).json({
+          err: __('user.resend_mail_register.user_has_active'),
+        });
+      }
+    }
+  } catch (err) {
+    channel.error(err);
+    res.status(500).json({
+      err: __('user.resend_mail_register.failed'),
+    });
+  }
+};
