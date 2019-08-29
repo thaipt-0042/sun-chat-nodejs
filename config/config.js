@@ -1,5 +1,6 @@
 module.exports = {
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN,
+  AUTHORIZATION_HEADER_DEFAULT: 'jwt_authorization',
   LIMIT_ITEM_SHOW: {
     CONTACT: 10,
     REQUEST_CONTACT: 10,
