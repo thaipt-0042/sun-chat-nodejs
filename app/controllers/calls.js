@@ -110,7 +110,8 @@ exports.acceptMember = async (req, res) => {
     const result = await Room.acceptMemberLiveChat(roomId, liveChatId, memberId);
 
     if (result) {
-      io.to(memberId).emit('be-accepted-by-master', { accepted: true });
+      const liveChat = await Room.getLiveChat(roomId, null, liveChatId);
+      io.to(memberId).emit('be-accepted-by-master', { accepted: true, isTypeVideo: liveChat.is_type_video });
 
       const listMember = await Room.getListMemberLiveChat(roomId, liveChatId);
       io.to(liveChatId).emit('list-member-live-chat', { listMember: listMember[0].members, offerId: memberId });

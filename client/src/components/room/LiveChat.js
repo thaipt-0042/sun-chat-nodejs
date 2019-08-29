@@ -78,10 +78,11 @@ class LiveChat extends Component {
     });
 
     this.socket.on('be-accepted-by-master', res => {
-      this.joinLiveChat(liveChatId);
+      this.joinLiveChat(liveChatId, res.isTypeVideo);
 
       this.setState({
         checkDisplayLayout: res.accepted,
+        cameraOn: res.isTypeVideo,
       });
     });
 
