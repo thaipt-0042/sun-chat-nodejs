@@ -100,7 +100,8 @@
   "error": {
     "403": "Bạn không có quyền thực hiện hành động này",
     "404": "Dữ liệu không tồn tại",
-    "common": "Đã xảy ra lỗi "
+    "common": "Đã xảy ra lỗi ",
+    "active_email_before_reset": "Bạn phải kích hoạt email trước khi sử dụng chức năng này"
   },
   "room": {
     "create": {

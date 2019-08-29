@@ -875,6 +875,12 @@ exports.checkResetToken = async function(req, res) {
       });
     }
 
+    if (!user.active) {
+      return res.status(500).json({
+        error: __('error.active_email_before_reset'),
+      });
+    }
+    
     return res.status(200).json({
       message: __('token_valid'),
     });

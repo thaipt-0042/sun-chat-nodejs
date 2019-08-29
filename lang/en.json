@@ -100,7 +100,8 @@
   "error": {
     "403": "Forbidden error",
     "404": "Not found",
-    "common": "Something went wrong"
+    "common": "Something went wrong",
+    "active_email_before_reset": "You must active email before use this feature"
   },
   "room": {
     "create": {

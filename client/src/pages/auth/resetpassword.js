@@ -15,6 +15,7 @@ class ResetPassword extends React.Component {
     error: '',
     errors: {},
     isTokenValid: true,
+    errorToken: '',
   };
 
   rules = {
@@ -65,6 +66,7 @@ class ResetPassword extends React.Component {
     checkResetPasswordToken(token).catch(err => {
       this.setState({
         isTokenValid: false,
+        errorToken: err.response.data.error,
       });
     });
   }
@@ -99,7 +101,6 @@ class ResetPassword extends React.Component {
   render() {
     const { message, errors, error, isTokenValid } = this.state;
     const { form, t } = this.props;
-
     return (
       <Fragment>
         <div className="form">
@@ -186,7 +187,7 @@ class ResetPassword extends React.Component {
               )}
             </Form>
           ) : (
-            <h1> {t('validate.token.in_valid')} </h1>
+            <h1> {this.state.errorToken} </h1>
           )}
         </div>
       </Fragment>
