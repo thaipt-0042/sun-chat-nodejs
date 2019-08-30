@@ -143,7 +143,7 @@ class ModalListNotMember extends PureComponent {
     const { checkedList, checkedAll, modalVisible } = this.state;
 
     return (
-      <div>
+      <React.Fragment>
         <Badge className="header-icon adding-member-icon" type="primary">
           <a href="javascript:;" onClick={this.changeStateModal}>
             <Icon type="plus-circle" />
@@ -211,7 +211,7 @@ class ModalListNotMember extends PureComponent {
             </div>
         </React.Fragment>
       </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }

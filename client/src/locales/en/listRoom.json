@@ -5,7 +5,7 @@
     }
   },
   "filter": {
-    "all": "The All",
+    "all": "All Chats",
     "un_read": "Unread Chats",
     "pinned": "Pinned Chats",
     "group_chat": "Group Chats",

@@ -115,7 +115,7 @@ const messageToHtml = {
       msgAttribute = `data-msg_id=${msgId}`;
     }
 
-    return `<div data-tag="[rp mid=${memberId}]" class="messageBadge"><div class="chatTimeLineTo reply-msg" data-mid=${memberId} ${msgAttribute}><span class="chatTimeLineReply" id="reply-msg">&#8592; Re</span><span class="ant-avatar messageBadge__avatar _avatarHoverTip _avatarClickTip _avatar_Uid_${memberId}">${avatar}</span></div></div>`;
+    return `<div data-tag="[rp mid=${memberId}]" class="messageBadge"><div class="chatTimeLineTo reply-msg" data-mid=${memberId} ${msgAttribute}><span class="chatTimeLineReply" id="reply-msg">&#8592; RE</span><span class="ant-avatar messageBadge__avatar _avatarHoverTip _avatarClickTip _avatar_Uid_${memberId}">${avatar}</span></div></div>`;
   },
   title: function(content) {
     return `<div><b>&#9432</b> ${content}</div>`;

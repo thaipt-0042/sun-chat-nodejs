@@ -1,20 +1,16 @@
-.anticon-filter {
-  float: right;
-  margin: 3px;
-}
-
 #div-filter {
-  height: 30px;
-  background-color: white;
-  margin: 2px;
-  border-radius: 5px;
+  height: $header-height;
+  background-color: transparent;
+  margin: 0;
+  padding: 20px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
-  padding: 4px;
 
   a {
     float: left;
-    font-size: 12px;
+    font-size: 13px;
     width: 100%;
+    // color: #fff;
   }
 }
 

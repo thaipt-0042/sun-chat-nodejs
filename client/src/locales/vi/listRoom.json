@@ -5,7 +5,7 @@
     }
   },
   "filter": {
-    "all": "Tất cả",
+    "all": "Tất cả box chat",
     "un_read": "Box chưa đọc",
     "pinned": "Box đã ghim",
     "group_chat": "Nhóm chat",

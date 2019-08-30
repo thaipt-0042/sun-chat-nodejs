@@ -3,7 +3,7 @@ import { deleteRoom, leaveRoom } from '../../api/room';
 import { withNamespaces } from 'react-i18next';
 import history from '../../history';
 import { room } from '../../config/room';
-import { Layout, Menu, Icon, Button, Dropdown, message, Typography, Avatar, Row, Col } from 'antd';
+import { Layout, Menu, Icon, Button, Dropdown, message, Typography, Avatar, Row, Col, Divider } from 'antd';
 import ModalListRequest from '../modals/room/ModalListRequest';
 import ModalListMember from '../modals/room/ModalListMember';
 import ModalListNotMember from '../modals/room/ModalListNotMember';
@@ -128,7 +128,7 @@ class HeaderOfRoom extends React.Component {
     return (
       <Header className="header-chat-room">
         <Row type="flex" justify="start">
-        <Col span={8}>
+        <Col xl={19} xs={12}>
           <Avatar
             size={30}
             src={
@@ -142,49 +142,43 @@ class HeaderOfRoom extends React.Component {
             {this.props.data.name}
           </Text>
         </Col>
-        <Col span={6} offset={9}>
+        <Col xl={5} xs={12}>
           <div className="option-header-room">
-          <Row>
-          <Col span={14} className="list-member-chat-room">
-            {this.props.isAdmin && (
-              <div className="icon-request-list">
-                <ModalListRequest roomId={data._id} />
-              </div>
-            )}
             {this.showRepresentativeMembers()}
             {this.props.isAdmin && (
-              <div className="modal-add-member">
+              <React.Fragment>
+                <Divider type="vertical" />
+                <ModalListRequest roomId={data._id} />
                 <ModalListNotMember />
-              </div>
+              </React.Fragment>
             )}
-          </Col>
-          <Col span={3}>
             {data.type !== room.ROOM_TYPE.MY_CHAT && (
-              <Dropdown
-                placement="bottomCenter"
-                overlay={
-                  <Menu className="menu-room-config">
-                      {this.props.isAdmin && (
+              <React.Fragment>
+                <Divider type="vertical" />
+                <Dropdown
+                  placement="bottomCenter"
+                  overlay={
+                    <Menu className="menu-room-config">
+                        {this.props.isAdmin && (
+                          <Menu.Item>
+                            <EditRoom roomInfo={data} />
+                          </Menu.Item>
+                        )}
+                        {this.props.isAdmin && (
+                          <Menu.Item>
+                            <Button onClick={this.handleDeleteRoom}>{t('button.delete-room')}</Button>
+                          </Menu.Item>
+                        )}
                         <Menu.Item>
-                          <EditRoom roomInfo={data} />
+                          {buttonLeaveRoom}
                         </Menu.Item>
-                      )}
-                      {this.props.isAdmin && (
-                        <Menu.Item>
-                          <Button onClick={this.handleDeleteRoom}>{t('button.delete-room')}</Button>
-                        </Menu.Item>
-                      )}
-                      <Menu.Item>
-                        {buttonLeaveRoom}
-                      </Menu.Item>
-                  </Menu>
-                }
-              >
-                <Icon type="setting" className="icon-setting-room" theme="outlined" />
-              </Dropdown>
+                    </Menu>
+                  }
+                >
+                  <Icon type="setting" className="icon-setting-room" theme="outlined" />
+                </Dropdown>
+              </React.Fragment>
             )}
-          </Col>
-          </Row>
           </div>
         </Col>
         </Row>

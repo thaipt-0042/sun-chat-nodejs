@@ -1,7 +1,7 @@
 .timelineMessage__message {
-  font-size: 14px;
+  font-size: 15px;
   overflow: hidden;
-  
+
   .messageBadge {
     vertical-align: middle !important;
     display: inline-flex;
@@ -56,6 +56,7 @@
   font-weight: 400;
   white-space: pre;
   word-wrap: normal;
+  font-size: 14px;
 }
 
 .member-infinite-container {
@@ -68,9 +69,7 @@
 }
 
 .timelineMessage--mention {
-  border-top: 1px solid #ddebd7;
-  border-bottom: 1px solid #c5c8c3;
-  background-color: #ddebd7;
+  background-color: #ddebd7 !important;
 }
 
 .messageBadge__toAllBadge {
@@ -107,6 +106,9 @@
 
 .wrap-message:hover {
   border: 1px solid #b7e0f6;
+  border-right: none;
+  border-left: none;
+  background-color: #f8fbff;
 }
 
 .info-block {
@@ -330,5 +332,5 @@ img.image-emoji {
 }
 
 .wrap-reply-msg {
-  padding-left: 10px  
+  padding-left: 10px
 }

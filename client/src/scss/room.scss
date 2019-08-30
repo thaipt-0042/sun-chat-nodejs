@@ -2,6 +2,7 @@
   color: #fff;
   float: right;
   background-color: #f3f3f2;
+  border-top: 1px solid #bdb5b5;
 }
 .icon-request-list {
   margin-top: -10px;
@@ -15,8 +16,10 @@
   color: black;
   font-size: 18px;
   float: left;
+  padding-left: 4px;
   padding-right: 4px;
-  margin-top: 6px;
+  margin-top: 4px;
+  cursor: pointer;
 }
 .menu-room-config {
   button {
@@ -53,7 +56,7 @@ head .delete-member {
 }
 .header-chat-room {
   background-color: #fff;
-  height: 40px;
+  height: $header-height-chatroom;
   border: none;
   padding: 0px;
   > div {
@@ -72,16 +75,17 @@ head .delete-member {
 }
 .list-member-chat-room {
   display: flex;
-  margin: 3px 0 0 5px;
+  margin: 1px 0;
+  cursor: pointer;
 }
 .adding-member-icon {
   float: right;
-  margin: 10px 0 0 5px;
+  margin: 3px 0;
 }
 
 .description-chat > .ant-layout-sider-children {
-  height: 89vh;
-  overflow: scroll;
+  height: calc(100vh - #{$header-height} - #{$header-height-chatroom});
+  overflow: auto;
 }
 
 .title-desc-chat-room,
@@ -112,7 +116,7 @@ head .delete-member {
 
 .assignee-info {
   max-height: 107px;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .content-desc-chat-room {
@@ -232,16 +236,14 @@ head .delete-member {
   margin-top: 10px;
 }
 
-.box-button {
-  padding: 5px;
-}
-
 .list-message > .ant-list-item {
   padding: 6px 0px;
 }
 
 .message-time {
+  font-size: 12px;
   padding-top: 10px;
+  text-align: right;
 }
 
 .list-message .ant-list-item-meta-title {
@@ -286,7 +288,7 @@ head .delete-member {
 }
 
 .timeLine__unreadLine {
-  padding: 8px 0;
+  padding: 3px 0;
 }
 
 .timeLine__unreadLineBorder {
@@ -302,10 +304,6 @@ head .delete-member {
   &:hover {
     background-color: #dcdcdc;
   }
-}
-
-.isEditing {
-  background-color: #b3daff;
 }
 
 .hide {
@@ -369,7 +367,8 @@ head .delete-member {
 }
 
 .infor-content {
-  margin-left: 45px;
+  margin-left: 41px;
+  margin-top: 3px;
 }
 
 .ant-list-item.li-message {
@@ -377,11 +376,11 @@ head .delete-member {
 }
 
 .wrap-message {
-  border: 1px solid #fff;
-}
-
-.message-time h4 {
-  font-size: 12px;
+  border: 1px solid #e6e6e6;
+  border-bottom-color: transparent;
+  border-right: none;
+  border-left: none;
+  padding: 0 15px;
 }
 
 .message-item {
@@ -393,7 +392,7 @@ head .delete-member {
 }
 
 .isEditing {
-  background-color: #b3daff;
+  background-color: #dcf0fa !important;
 }
 
 .msg-notification {
@@ -404,15 +403,11 @@ head .delete-member {
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
-  font-family: sans-serif !important;
+  font-family: inherit !important;
 }
 
 .timelineMessage__message {
   margin-top: -16px;
-}
-
-.list-message .ant-row {
-  border-bottom: 1px solid rgba(24, 24, 24, 0.2);
 }
 
 .pre-notification {
@@ -433,6 +428,13 @@ pre {
 
 .option-header-room {
   padding-top: 5px;
+  padding-right: 5px;
+  display: flex;
+  justify-content: flex-end;
+
+  .ant-divider-vertical {
+    height: 30px;
+  }
 }
 
 .button-group-choose-type-call {
@@ -482,16 +484,20 @@ pre {
 
 .chatSendArea {
   border: 1px solid #989898;
-  border-radius: 5px;
+  border-radius: 3px;
 
   margin: 0 15px;
   .ant-input {
     border-radius: 0;
+    border-width: 1px 0 0 0 !important;
     &:focus {
       box-shadow: none;
     }
   }
   .box-button {
+    padding: 5px;
+    padding-bottom: 10px;
+
     a {
       color: #0a3661;
       font-size: 13px;
@@ -501,6 +507,7 @@ pre {
       line-height: 23px;
       font-size: 13px;
       border-radius: 3px;
+      margin-left: 3px;
       &.ant-btn-primary {
         background-color: #0d4d9a;
         border-color: #0d4d9a;
