@@ -8,6 +8,7 @@ import { getRoomAvatarUrl, getUserAvatarUrl } from './../../helpers/common';
 import { room } from '../../config/room';
 import { sendCallingRequest } from '../../api/room';
 import { createLiveChat } from '../../api/call';
+import { room as config } from '../../config/room';
 const _ = require('lodash');
 const CheckboxGroup = Checkbox.Group;
 
@@ -87,11 +88,16 @@ class ChooseMemberToCall extends React.Component {
   };
 
   handleSendRequest = e => {
-    createLiveChat({ roomId: this.props.roomDetail._id, callType: e.target.value }).then(res => {
+    const { _id, name, type } = this.props.roomDetail;
+    createLiveChat({ roomId: _id, callType: e.target.value }).then(res => {
       if (res.data.success) {
-        const { checkedList } = this.state;
-        const roomId = this.props.roomDetail._id;
-        const roomName = this.props.roomDetail.name;
+        let { checkedList, listMember } = this.state;
+        const roomId = _id;
+        const roomName = name;
+
+        if (type === config.ROOM_TYPE.DIRECT_CHAT) {
+          checkedList[0] = listMember[0]._id;
+        }
 
         if (res.data.id) {
           const liveChatId = res.data.id;
@@ -102,9 +108,8 @@ class ChooseMemberToCall extends React.Component {
             'toolbar=yes, width=' + window.innerWidth + ',height=' + window.innerHeight
           );
 
-          sendCallingRequest({checkedList, roomName, liveChatId}, roomId)
-            .then(res => {
-            })
+          sendCallingRequest({ checkedList, roomName, liveChatId }, roomId)
+            .then(res => {})
             .catch(error => {
               message.error(error.response.data.error);
             });
@@ -127,45 +132,50 @@ class ChooseMemberToCall extends React.Component {
           <Row>
             <h2 className="title-call">{t('title.video-audio-call')}</h2>
           </Row>
-          <Row>
-            <Avatar src={getRoomAvatarUrl(roomDetail.avatar)} />
-            &nbsp;&nbsp;
-            <span className="nav-text">{roomDetail.name}</span>
-          </Row>
-          <Row className="input-search-member-to-call">
-            <Input.Search placeholder={t('video-audio-call.search-member')} onChange={this.handleSearch} />
-          </Row>
-          <Row>
-            <Col span={24}>
-              <a onClick={this.oncheckedAll}> {t('button.check-all')} </a>
-              <a onClick={this.unCheckedAll}> / {t('button.uncheck-all')} </a>
-            </Col>
-            <Col span={24} className="group-call-member-list-box">
-              <p className="group-call-member-list-box-title">{t('video-audio-call.choose-member')}</p>
-              {listMember.length > 0 ? (
-                <div className="infinite-container container-choose-member-call">
-                  <CheckboxGroup onChange={this.onChange} value={checkedList}>
-                    <List
-                      style={{ padding: '5px' }}
-                      dataSource={listMember}
-                      renderItem={item => (
-                        <List.Item key={item._id}>
-                          <Checkbox value={item._id} className="item-checkbox" key={item._id} />
-                          <List.Item.Meta
-                            avatar={<Avatar src={getUserAvatarUrl(item.avatar)} />}
-                            title={item.name}
-                            description={item.email}
-                          />
-                        </List.Item>
-                      )}
-                    />
-                  </CheckboxGroup>
-                </div>
-              ) : (
-                <div id="no-contact">{t('no-data')}</div>
-              )}
-            </Col>
-          </Row>
+          {roomDetail.type !== config.ROOM_TYPE.DIRECT_CHAT && (
+            <div>
+              <Row>
+                <Avatar src={getRoomAvatarUrl(roomDetail.avatar)} />
+                &nbsp;&nbsp;
+                <span className="nav-text">{roomDetail.name}</span>
+              </Row>
+
+              <Row className="input-search-member-to-call">
+                <Input.Search placeholder={t('video-audio-call.search-member')} onChange={this.handleSearch} />
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <a onClick={this.oncheckedAll}> {t('button.check-all')} </a>
+                  <a onClick={this.unCheckedAll}> / {t('button.uncheck-all')} </a>
+                </Col>
+                <Col span={24} className="group-call-member-list-box">
+                  <p className="group-call-member-list-box-title">{t('video-audio-call.choose-member')}</p>
+                  {listMember.length > 0 ? (
+                    <div className="infinite-container container-choose-member-call">
+                      <CheckboxGroup onChange={this.onChange} value={checkedList}>
+                        <List
+                          style={{ padding: '5px' }}
+                          dataSource={listMember}
+                          renderItem={item => (
+                            <List.Item key={item._id}>
+                              <Checkbox value={item._id} className="item-checkbox" key={item._id} />
+                              <List.Item.Meta
+                                avatar={<Avatar src={getUserAvatarUrl(item.avatar)} />}
+                                title={item.name}
+                                description={item.email}
+                              />
+                            </List.Item>
+                          )}
+                        />
+                      </CheckboxGroup>
+                    </div>
+                  ) : (
+                    <div id="no-contact">{t('no-data')}</div>
+                  )}
+                </Col>
+              </Row>
+            </div>
+          )}
           <Row className="button-group-choose-type-call">
             <Button type="primary" onClick={this.handleSendRequest} value={room.CALL.TYPE.VIDEO_CHAT}>
               {t('button.video-call')}
