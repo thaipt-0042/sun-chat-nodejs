@@ -87,11 +87,18 @@ class LiveChat extends Component {
     });
 
     this.socket.on('add-member', res => {
-      var call = _this.peer.call(res.peerId, _this.stream);
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then(() => {
+          var call = _this.peer.call(res.peerId, _this.stream);
 
-      call.on('stream', function(stream) {
-        playVideo(stream, res.userId);
-      });
+          call.on('stream', function(remoteStream) {
+            playVideo(remoteStream, res.userId);
+          });
+        })
+        .catch(e => {
+          console.log(e.name + ': ' + e.message);
+        });
     });
 
     this.socket.on('list-member-live-chat', ({ listMember, offerId }) => {
@@ -134,31 +141,34 @@ class LiveChat extends Component {
   }
 
   joinLiveChat(liveChatId, isTypeVideo) {
-    let _this = this;
+    let _this = this,
+      options = { audio: true, video: true };
 
     this.peer = new Peer();
-    /* const peer = new Peer(this.props.userContext.info._id,
-      {
-        host: 'localhost',
-        port: 3001,
-        path: '/peerjs'
-      }
-    );*/
 
     this.peer.on('open', function(peerId) {
       _this.socket.emit('join-live-chat', { liveChatId: liveChatId, peerId: peerId });
     });
 
     this.peer.on('call', function(call) {
-      call.answer(_this.stream);
-      call.on('stream', function(stream) {
-        playVideo(stream, $('.participant-video').first().attr('id'));
-      });
+      navigator.mediaDevices
+        .getUserMedia(options)
+        .then(() => {
+          call.answer(_this.stream);
+          call.on('stream', function(remoteStream) {
+            playVideo(
+              remoteStream,
+              $('.participant-video')
+                .first()
+                .attr('id')
+            );
+          });
+        })
+        .catch(e => {
+          console.log(e.name + ': ' + e.message);
+        });
     });
 
-    // this.socket.emit('join-live-chat', { liveChatId: liveChatId, peerId: peerId });
-
-    let options = { audio: true, video: true };
     openStream(options, function(stream) {
       _this.stream = stream;
       playVideo(stream, 'main-video');
@@ -333,8 +343,8 @@ class LiveChat extends Component {
   };
 
   changeMainVideo = e => {
-    document.getElementById('main-video').srcObject  = document.getElementById(e.currentTarget.id).srcObject;
-  }
+    document.getElementById('main-video').srcObject = document.getElementById(e.currentTarget.id).srcObject;
+  };
 
   render = () => {
     const {
@@ -385,7 +395,7 @@ class LiveChat extends Component {
                 {listMember.map(member => {
                   return (
                     <div key={member.id} className={rightOn ? 'member-of-stream' : 'member-of-stream hide'}>
-                      <video className="participant-video" id={member.id} onClick={this.changeMainVideo}/>
+                      <video className="participant-video" id={member.id} onClick={this.changeMainVideo} />
                       <span className="person-name">{member.name}</span>
                     </div>
                   );
