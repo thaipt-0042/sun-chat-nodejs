@@ -793,7 +793,7 @@ exports.sendCallingRequest = async (req, res) => {
   }
 };
 
-exports.reactionMsg = async(req, res) => {
+exports.reactionMsg = async (req, res) => {
   const io = req.app.get('socketIO');
   const { roomId } = req.params;
   const { _id: userId } = req.decoded;
@@ -807,16 +807,16 @@ exports.reactionMsg = async(req, res) => {
     return res.status(200).json({
       message: __('reaction.success'),
     });
-  } catch(err) {
+  } catch (err) {
     channel.error(err);
 
     return res.status(500).json({
       error: __('reaction.failed'),
     });
   }
-}
+};
 
-exports.getReactionUserListOfMsg = async(req, res) => {
+exports.getReactionUserListOfMsg = async (req, res) => {
   const io = req.app.get('socketIO');
   const { roomId, msgId, reactionTag } = req.params;
   const { _id: userId } = req.decoded;
@@ -825,29 +825,29 @@ exports.getReactionUserListOfMsg = async(req, res) => {
     let listUser = await Room.getUserListByReactionTag({ roomId, msgId, reactionTag });
 
     return res.status(200).json({ list_user: listUser });
-  } catch(err) {
+  } catch (err) {
     channel.error(err);
 
     return res.status(500).json({
       error: __('error.common'),
     });
   }
-}
+};
 
-exports.getMessageInfo = async(req, res) => {
-  const { roomId, messageId} = req.params;
+exports.getMessageInfo = async (req, res) => {
+  const { roomId, messageId } = req.params;
 
   try {
     const message = await Room.getMessageInfo(roomId, messageId);
 
     return res.status(200).json({
-      message: message
-    })
-  } catch(err) {
+      message: message,
+    });
+  } catch (err) {
     channel.error(err);
 
     return res.status(500).json({
       error: __('error.common'),
     });
   }
-}
+};

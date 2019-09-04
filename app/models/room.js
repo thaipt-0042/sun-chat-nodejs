@@ -19,6 +19,15 @@ const Reactions = new Schema(
   }
 );
 
+const HistoryMessage = new Schema(
+  {
+    content: { type: String },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const Messages = new Schema(
   {
     content: { type: String },
@@ -26,6 +35,7 @@ const Messages = new Schema(
     user: { type: Schema.ObjectId, ref: 'User' },
     reactions: [Reactions],
     deletedAt: { type: Date, default: null },
+    history: [HistoryMessage],
   },
   {
     timestamps: true,
@@ -242,12 +252,12 @@ RoomSchema.statics = {
           createdAt: 1,
           quantity_unread: { $size: '$message_able' },
           members: {
-            $cond : {
+            $cond: {
               if: { $eq: ['$type', config.ROOM_TYPE.DIRECT_CHAT] },
               then: { $arrayElemAt: ['$members.user_info._id', 0] },
               else: '',
-            }
-          }
+            },
+          },
         },
       }
     );
@@ -1102,12 +1112,22 @@ RoomSchema.statics = {
   },
 
   updateMessage: async function(roomId, userId, msgId, content) {
+    const historyMsg = {
+      content: content,
+      createdAt: Date.now(),
+    };
+
     return this.updateOne(
       {
         _id: roomId,
         messages: { $elemMatch: { _id: msgId } },
       },
-      { $set: { 'messages.$.content': content, updatedAt: Date.now() } }
+      {
+        $set: { 'messages.$.content': content, updatedAt: Date.now() },
+        $push: {
+          'messages.$.history': historyMsg,
+        },
+      }
     );
   },
 
