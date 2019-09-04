@@ -85,7 +85,9 @@ export function loadUnreadNextMessages(roomId, currentMsgId) {
 }
 
 export function loadPrevMessages(roomId, currentMsgId = null) {
-  return new Http().authenticated().get(`/rooms/${roomId}/messages?prevMsgFlag=1` + (currentMsgId ? `&currentMsgId=${currentMsgId}` : ''));
+  return new Http()
+    .authenticated()
+    .get(`/rooms/${roomId}/messages?prevMsgFlag=1` + (currentMsgId ? `&currentMsgId=${currentMsgId}` : ''));
 }
 
 export function sendMessage(roomId, data) {
@@ -130,4 +132,8 @@ export function getReactionUserListOfMsg(roomId, msgId, reactionTag) {
 
 export function getMessageInfo(roomId, msgId) {
   return new Http().authenticated().get(`rooms/${roomId}/messages/${msgId}`);
+}
+
+export function getEditingHistoryOfMessage(roomId, msgId) {
+  return new Http().authenticated().get(`rooms/${roomId}/messages/${msgId}/get-editing-history`);
 }

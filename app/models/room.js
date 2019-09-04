@@ -1054,6 +1054,7 @@ RoomSchema.statics = {
           'user_info.email': 1,
           is_notification: 1,
           reactions: 1,
+          history: 1,
         },
       },
     ]);
@@ -1112,9 +1113,11 @@ RoomSchema.statics = {
   },
 
   updateMessage: async function(roomId, userId, msgId, content) {
+    const oldMessage = await this.getMessageInfo(roomId, msgId);
     const historyMsg = {
-      content: content,
-      createdAt: Date.now(),
+      content: oldMessage.content,
+      createdAt: oldMessage.updatedAt,
+      updatedAt: oldMessage.updatedAt,
     };
 
     return this.updateOne(
@@ -1125,7 +1128,10 @@ RoomSchema.statics = {
       {
         $set: { 'messages.$.content': content, updatedAt: Date.now() },
         $push: {
-          'messages.$.history': historyMsg,
+          'messages.$.history': {
+            $each: [historyMsg],
+            $position: 0,
+          },
         },
       }
     );
@@ -1163,6 +1169,7 @@ RoomSchema.statics = {
           'messages.user_info.avatar': 1,
           'messages.is_notification': 1,
           'messages.reactions': 1,
+          'messages.history': 1,
         },
       },
     ]);

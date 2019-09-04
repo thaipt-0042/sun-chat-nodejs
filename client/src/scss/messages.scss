@@ -40,7 +40,6 @@
       cursor: pointer;
     }
   }
-
 }
 
 .chatCode {
@@ -140,7 +139,7 @@
   position: relative;
 
   &:after {
-    content: "";
+    content: '';
     display: inline-block;
     position: absolute;
     width: 1px;
@@ -236,7 +235,6 @@
   cursor: default;
 }
 
-
 img.image-emoji {
   width: 20px;
   height: 20px;
@@ -307,7 +305,7 @@ img.image-emoji {
 }
 
 .chatQuote:after {
-  content: "";
+  content: '';
   display: inline-block;
   position: absolute;
   width: 1px;
@@ -332,5 +330,24 @@ img.image-emoji {
 }
 
 .wrap-reply-msg {
-  padding-left: 10px
+  padding-left: 10px;
+}
+
+#message-history {
+  .ant-col-22 {
+    padding-top: 20px;
+    margin-left: -10%;
+  }
+
+  .ant-col-2 {
+    width: 13%;
+    margin-left: 5%;
+  }
+}
+
+.show-msg-history {
+  .ant-modal-body {
+    max-height: 400px;
+    overflow: scroll;
+  }
 }

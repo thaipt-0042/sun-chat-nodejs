@@ -851,3 +851,22 @@ exports.getMessageInfo = async (req, res) => {
     });
   }
 };
+
+exports.getEditingHistoryOfMessage = async (req, res) => {
+  const { roomId, messageId } = req.params;
+
+  try {
+    const message = await Room.getMessageInfo(roomId, messageId);
+    let data = message.history ? message.history : [];
+
+    return res.status(200).json({
+      data,
+    });
+  } catch (err) {
+    channel.error(err);
+
+    return res.status(500).json({
+      error: __('error.common'),
+    });
+  }
+};

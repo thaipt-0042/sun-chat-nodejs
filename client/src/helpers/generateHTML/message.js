@@ -1,7 +1,7 @@
 'use trict';
 
 import React from 'react';
-import { Layout, Input, Button, List, Avatar, Icon, Row, Col, Badge, Popover, message, Spin, Tabs } from 'antd';
+import { Layout, Input, Button, List, Avatar, Icon, Row, Col, Badge, Popover, message, Spin, Tabs, Modal } from 'antd';
 import { messageConfig } from '../../config/message';
 import { Link } from 'react-router-dom';
 import { getUserAvatarUrl, getEmoji } from './../common';
@@ -11,7 +11,12 @@ import handlersMessage from './../handlersMessage';
 import configEmoji from '../../config/emoji';
 import avatarConfig from '../../config/avatar';
 import { generateReactionMsg, generateReactionUserList } from './reaction';
-import { deleteMessage as deleteMessageAPI, sendMessage, updateMessage } from './../../api/room.js';
+import {
+  deleteMessage as deleteMessageAPI,
+  sendMessage,
+  updateMessage,
+  getEditingHistoryOfMessage,
+} from './../../api/room.js';
 import { fetchReactionUserList } from './reaction';
 
 export function getReplyMessageContent(component, message) {
@@ -77,7 +82,7 @@ export function generateMsgContent(component, infoUserTip) {
   );
 }
 
-export function generateMessageHTML(component, message, isGetContentOfReplyMsg = false) {
+export function generateMessageHTML(component, message, isGetContentOfReplyMsg = false, isShowMessageHistory = false) {
   let {
     messages,
     nicknames,
@@ -89,6 +94,7 @@ export function generateMessageHTML(component, message, isGetContentOfReplyMsg =
     messageIdHovering,
     infoUserTip,
     flagMsgId,
+    isShowMsgHistory,
   } = component.state;
   const { t, roomInfo, isReadOnly, roomId, allMembers } = component.props;
   const currentUserInfo = component.props.userContext.info;
@@ -104,7 +110,6 @@ export function generateMessageHTML(component, message, isGetContentOfReplyMsg =
     messageHtml.__html.includes(`data-tag="[rp mid=${currentUserInfo._id}]"`) ||
     messageHtml.__html.includes(messageConfig.SIGN_TO_ALL);
   let reactionOfMsg = reactionDupplicateCounter(component, message.reactions);
-
   for (let message of messages) {
     if (!redLineMsgId || message._id > redLineMsgId) {
       nextMsgId = message._id;
@@ -117,44 +122,45 @@ export function generateMessageHTML(component, message, isGetContentOfReplyMsg =
       key={message._id}
       ref={element => (component.attr.messageRowRefs[message._id] = element)}
       className={
-        'wrap-message' + (isToMe ? ' timelineMessage--mention' : '') + (messageIdEditing === message._id ? ' isEditing' : '')
+        'wrap-message' +
+        (isToMe ? ' timelineMessage--mention' : '') +
+        (messageIdEditing === message._id ? ' isEditing' : '')
       }
     >
       {message._id === nextMsgId ? redLine : ''}
-      <Row
-        key={message._id}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        id={message._id}
-      >
+      <Row key={message._id} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} id={message._id}>
         <Col span={22}>
-          <List.Item className="li-message">
-            <Popover
-              placement="topLeft"
-              trigger="click"
-              text={message.user_info.name}
-              content={generateMsgContent(component, message.user_info)}
-              onVisibleChange={component.handleVisibleChange(message.user_info._id)}
-            >
-              <div data-user-id={message.user_info._id}>
-                <List.Item.Meta
-                  className="show-infor"
-                  avatar={
-                    <Avatar
-                      className={`_avatarHoverTip _avatarClickTip avatarClickTip avatarMedium _avatar _avatar_Uid_${message.user_info._id}`}
-                      size={avatarConfig.AVATAR.SIZE.MEDIUM}
-                      src={getUserAvatarUrl(message.user_info.avatar)}
-                    />
-                  }
-                  title={
-                    <p>
-                      {nicknames[message.user_info._id] ? nicknames[message.user_info._id] : message.user_info.name}
-                    </p>
-                  }
-                />
-              </div>
-            </Popover>
-          </List.Item>
+          {!isShowMessageHistory && (
+            <List.Item className="li-message">
+              <Popover
+                placement="topLeft"
+                trigger="click"
+                text={message.user_info.name}
+                content={generateMsgContent(component, message.user_info)}
+                onVisibleChange={component.handleVisibleChange(message.user_info._id)}
+              >
+                <div data-user-id={message.user_info._id}>
+                  <List.Item.Meta
+                    className="show-infor"
+                    avatar={
+                      <Avatar
+                        className={`_avatarHoverTip _avatarClickTip avatarClickTip avatarMedium _avatar _avatar_Uid_${
+                          message.user_info._id
+                        }`}
+                        size={avatarConfig.AVATAR.SIZE.MEDIUM}
+                        src={getUserAvatarUrl(message.user_info.avatar)}
+                      />
+                    }
+                    title={
+                      <p>
+                        {nicknames[message.user_info._id] ? nicknames[message.user_info._id] : message.user_info.name}
+                      </p>
+                    }
+                  />
+                </div>
+              </Popover>
+            </List.Item>
+          )}
           <div className="infor-content">
             <pre className={'timelineMessage__message ' + notificationClass} dangerouslySetInnerHTML={messageHtml} />
             {reactionOfMsg.length > 0 ? (
@@ -190,8 +196,8 @@ export function generateMessageHTML(component, message, isGetContentOfReplyMsg =
         <Col span={2} className="message-time">
           <span>
             {message.updatedAt !== message.createdAt ? (
-              <span>
-                <Icon type="edit" />{' '}
+              <span onClick={() => handleShowMsgHistory(roomId, message._id, component)}>
+                <Icon type="edit" />
               </span>
             ) : (
               ''
@@ -283,6 +289,27 @@ function handleMouseEnter(e) {
   }
 }
 
+function handleHiddeMsgHistory(component) {
+  component.setState({
+    isShowMsgHistory: false,
+  });
+}
+
+function handleShowMsgHistory(roomId, msgId, component) {
+  getEditingHistoryOfMessage(roomId, msgId).then(res => {
+    const msgHistory = res.data.data;
+    let msgHistoryHTML = [];
+
+    msgHistory.map(m => {
+      msgHistoryHTML.push(generateMessageHTML(component, m, true, true));
+    });
+
+    component.setState({
+      isShowMsgHistory: true,
+      msgHistoryHTML,
+    });
+  });
+}
 function handleMouseLeave(e) {
   const messageIdHovering = e.currentTarget.id;
 
