@@ -182,7 +182,11 @@ router.post(
   [auth.jwtMiddleware, authorization.room.hasAuthorization],
   roomsController.editDescOfRoom
 );
-
+router.get(
+  '/rooms/:roomId/messages/:messageId/get-editing-history',
+  [auth.jwtMiddleware, authorization.room.hasAuthorization],
+  roomsController.getEditingHistoryOfMessage
+);
 // Task
 router.post(
   '/rooms/:roomId/tasks',
